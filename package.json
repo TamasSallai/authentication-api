@@ -1,0 +1,36 @@
+{
+  "name": "authentication-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "predev": "npm run build",
+    "dev": "concurrently \"tsc -w\" \"nodemon dist/app.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TamasSallai/authentication-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TamasSallai/authentication-api/issues"
+  },
+  "homepage": "https://github.com/TamasSallai/authentication-api#readme",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.14",
+    "concurrently": "^7.6.0",
+    "nodemon": "^2.0.20",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.7.2",
+    "nanoid": "^4.0.0"
+  }
+}
