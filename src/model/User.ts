@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { nanoid } from 'nanoid'
+import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcrypt'
 
 export interface UserInput {
@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema<UserDocument>({
   verificationCode: {
     type: String,
     required: true,
-    default: nanoid,
+    default: () => uuidv4(),
   },
   passwordResetCode: String,
   verified: {
@@ -48,14 +48,17 @@ const userSchema = new mongoose.Schema<UserDocument>({
   },
 })
 
-userSchema.pre('save', async function (this: UserDocument) {
-  if (!this.isModified()) {
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) {
     return
   }
   this.password = await bcrypt.hash(this.password, 10)
 })
 
-userSchema.methods.validatePassword = async function (enteredPassword: string) {
+userSchema.methods.validatePassword = async function (
+  this: UserDocument,
+  enteredPassword: string
+) {
   return await bcrypt.compare(enteredPassword, this.password)
 }
 

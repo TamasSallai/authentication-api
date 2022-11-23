@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const nanoid_1 = require("nanoid");
+const uuid_1 = require("uuid");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const userSchema = new mongoose_1.default.Schema({
     email: {
@@ -36,7 +36,7 @@ const userSchema = new mongoose_1.default.Schema({
     verificationCode: {
         type: String,
         required: true,
-        default: nanoid_1.nanoid,
+        default: () => (0, uuid_1.v4)(),
     },
     passwordResetCode: String,
     verified: {
@@ -46,7 +46,7 @@ const userSchema = new mongoose_1.default.Schema({
 });
 userSchema.pre('save', function () {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!this.isModified()) {
+        if (!this.isModified('password')) {
             return;
         }
         this.password = yield bcrypt_1.default.hash(this.password, 10);
