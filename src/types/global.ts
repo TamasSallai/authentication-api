@@ -8,6 +8,8 @@ declare global {
       SMTP_HOST: string
       SMTP_PORT: string
       SMTP_SECURE: string
+      ACCESS_TOKEN_KEY: string
+      REFRESH_TOKEN_KEY: string
     }
   }
 }

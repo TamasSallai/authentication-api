@@ -13,16 +13,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
-const default_1 = require("../config/default");
 const createTestCreds = () => __awaiter(void 0, void 0, void 0, function* () {
     const creds = yield nodemailer_1.default.createTestAccount();
     console.log({ creds });
 });
 createTestCreds();
-const transporter = nodemailer_1.default.createTransport(Object.assign(Object.assign({}, default_1.SMTP), { auth: {
-        user: default_1.SMTP.user,
-        pass: default_1.SMTP.pass,
-    } }));
+const transporter = nodemailer_1.default.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_pass,
+    },
+});
 const sendEmail = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     transporter.sendMail(payload, (err, info) => {
         if (err) {

@@ -43,6 +43,8 @@ const userSchema = new mongoose_1.default.Schema({
         type: Boolean,
         default: false,
     },
+}, {
+    timestamps: true,
 });
 userSchema.pre('save', function () {
     return __awaiter(this, void 0, void 0, function* () {

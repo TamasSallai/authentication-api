@@ -8,19 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const conn = yield mongoose_1.default.connect(process.env.MONGODB_URI);
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
+exports.deserializeUser = void 0;
+const jwt_1 = require("../utils/jwt");
+const deserializeUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const authorization = req.headers.authorization;
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+        const accessToken = authorization.substring(7);
+        const decodedUser = (0, jwt_1.verifyJwt)(accessToken, 'accessTokenPublicKey');
+        res.locals.user = decodedUser;
     }
-    catch (error) {
-        console.log('Connection refused');
-        process.exit(1);
-    }
+    next();
 });
-exports.default = connectDb;
+exports.deserializeUser = deserializeUser;

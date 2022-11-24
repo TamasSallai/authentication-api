@@ -12,15 +12,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const conn = yield mongoose_1.default.connect(process.env.MONGODB_URI);
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-    }
-    catch (error) {
-        console.log('Connection refused');
-        process.exit(1);
-    }
+exports.signRefreshToken = exports.signAccessToken = void 0;
+const Session_1 = __importDefault(require("../model/Session"));
+const jwt_1 = require("../utils/jwt");
+const signAccessToken = (user) => {
+    const payload = user.toJSON();
+    const accessToken = (0, jwt_1.signJwt)(payload, 'accessTokenPrivateKey');
+    return accessToken;
+};
+exports.signAccessToken = signAccessToken;
+const createSession = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    return Session_1.default.create({ user: userId });
 });
-exports.default = connectDb;
+const signRefreshToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const session = yield createSession(userId);
+    const refreshToken = (0, jwt_1.signJwt)({
+        session: session._id,
+    }, 'refreshTokenPrivateKey');
+    return refreshToken;
+});
+exports.signRefreshToken = signRefreshToken;

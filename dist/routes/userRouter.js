@@ -10,4 +10,5 @@ router.post('/users', userController_1.createUserHandler);
 router.post('/users/verify/:id/:verificationCode', userController_1.verifyUserHandler);
 router.post('/users/forgotpassword', userController_1.forgotPasswordHandler);
 router.post('/users/resetpassword/:id/:passwordResetCode', userController_1.resetPasswordHandler);
+router.post('/users/me', userController_1.getCurrentUserhandler);
 exports.default = router;

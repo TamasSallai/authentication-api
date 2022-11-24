@@ -1,12 +1,11 @@
-import mongoose from "mongoose"
-import { MONGODB_URI } from "./default"
+import mongoose from 'mongoose'
 
 const connectDb = async () => {
   try {
-    const conn = await mongoose.connect(MONGODB_URI)
+    const conn = await mongoose.connect(process.env.MONGODB_URI)
     console.log(`MongoDB Connected: ${conn.connection.host}`)
   } catch (error) {
-    console.log("Connection refused")
+    console.log('Connection refused')
     process.exit(1)
   }
 }

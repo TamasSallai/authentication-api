@@ -28,12 +28,14 @@ export const createUserHandler = async (
 }
 
 interface VerifyUserInput {
-  id: string
-  verificationCode: string
+  params: {
+    id: string
+    verificationCode: string
+  }
 }
 
 export const verifyUserHandler = async (
-  req: Request<VerifyUserInput>,
+  req: Request<VerifyUserInput['params']>,
   res: Response
 ) => {
   try {
@@ -62,11 +64,13 @@ export const verifyUserHandler = async (
 }
 
 interface ForgotPasswordInput {
-  email: string
+  body: {
+    email: string
+  }
 }
 
 export const forgotPasswordHandler = async (
-  req: Request<{}, {}, ForgotPasswordInput>,
+  req: Request<{}, {}, ForgotPasswordInput['body']>,
   res: Response
 ) => {
   const message = {
@@ -139,4 +143,8 @@ export const resetPasswordHandler = async (
       return res.status(400).send({ error: 'Invalid input' })
     }
   }
+}
+
+export const getCurrentUserhandler = (req: Request, res: Response) => {
+  return res.send(res.locals.user)
 }

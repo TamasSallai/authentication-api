@@ -9,44 +9,49 @@ export interface UserInput {
   password: string
 }
 
-interface UserDocument extends UserInput, mongoose.Document {
+export interface UserDocument extends UserInput, mongoose.Document {
   createdAt: Date
-  updatedAt: Date | null
+  updatedAt: Date
   verificationCode: string
   passwordResetCode: string | null
   verified: boolean
   validatePassword(enteredPassword: string): Promise<boolean>
 }
 
-const userSchema = new mongoose.Schema<UserDocument>({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
+const userSchema = new mongoose.Schema<UserDocument>(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    verificationCode: {
+      type: String,
+      required: true,
+      default: () => uuidv4(),
+    },
+    passwordResetCode: String,
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  verificationCode: {
-    type: String,
-    required: true,
-    default: () => uuidv4(),
-  },
-  passwordResetCode: String,
-  verified: {
-    type: Boolean,
-    default: false,
-  },
-})
+  {
+    timestamps: true,
+  }
+)
 
 userSchema.pre('save', async function () {
   if (!this.isModified('password')) {
