@@ -1,5 +1,5 @@
 import express from 'express'
-import requireUser from '../controller/requireUser'
+import requireUser from '../middleware/requireUser'
 import {
   createUserHandler,
   verifyUserHandler,
