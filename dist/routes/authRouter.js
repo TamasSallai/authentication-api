@@ -7,4 +7,5 @@ const express_1 = __importDefault(require("express"));
 const authController_1 = require("../controller/authController");
 const router = express_1.default.Router();
 router.post('/sessions', authController_1.createSessionHandler);
+router.post('/sessions/refresh', authController_1.refreshAccessTokenHandler);
 exports.default = router;

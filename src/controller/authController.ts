@@ -1,6 +1,11 @@
 import { Request, Response } from 'express'
-import { signAccessToken, signRefreshToken } from '../service/authService'
-import { findUserByEmail } from '../service/userService'
+import {
+  findSessionById,
+  signAccessToken,
+  signRefreshToken,
+} from '../service/authService'
+import { findUserByEmail, findUserById } from '../service/userService'
+import { verifyJwt } from '../utils/jwt'
 
 interface createSessionInput {
   body: {
@@ -35,4 +40,36 @@ export const createSessionHandler = async (
   const refreshToken = await signRefreshToken(user._id)
 
   return res.send({ accessToken, refreshToken })
+}
+
+export const refreshAccessTokenHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const refreshToken = req.get('x-refresh') || ''
+
+  console.log(refreshToken)
+
+  const decoded = verifyJwt<{ session: string }>(
+    refreshToken,
+    'refreshTokenKey'
+  )
+  if (!decoded) {
+    console.log('token is not valid')
+
+    return res.status(401).send({ error: 'Could not refresh token' })
+  }
+
+  const session = await findSessionById(decoded.session)
+  if (!session || !session.valid) {
+    return res.status(401).send({ error: 'Could not refresh token' })
+  }
+
+  const user = await findUserById(String(session.user))
+  if (!user) {
+    return res.status(401).send({ error: 'Could not refresh token' })
+  }
+
+  const accessToken = signAccessToken(user)
+  return res.send({ accessToken })
 }

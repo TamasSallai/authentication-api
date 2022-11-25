@@ -1,11 +1,14 @@
+import { omit } from 'lodash'
 import SessionModel from '../model/Session'
-import { UserDocument } from '../model/User'
+import { privateFields, UserDocument } from '../model/User'
 import { signJwt } from '../utils/jwt'
 
 export const signAccessToken = (user: UserDocument) => {
-  const payload = user.toJSON()
+  const payload = omit(user.toJSON(), privateFields)
 
-  const accessToken = signJwt(payload, 'accessTokenPrivateKey')
+  const accessToken = signJwt(payload, 'accessTokenKey', {
+    expiresIn: '15m',
+  })
 
   return accessToken
 }
@@ -17,12 +20,13 @@ const createSession = async (userId: string) => {
 export const signRefreshToken = async (userId: string) => {
   const session = await createSession(userId)
 
-  const refreshToken = signJwt(
-    {
-      session: session._id,
-    },
-    'refreshTokenPrivateKey'
-  )
+  const refreshToken = signJwt({ session: session._id }, 'refreshTokenKey', {
+    expiresIn: '1y',
+  })
 
   return refreshToken
+}
+
+export const findSessionById = async (id: string) => {
+  return SessionModel.findById(id)
 }

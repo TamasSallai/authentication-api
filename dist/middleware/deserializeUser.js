@@ -15,7 +15,7 @@ const deserializeUser = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     const authorization = req.headers.authorization;
     if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
         const accessToken = authorization.substring(7);
-        const decodedUser = (0, jwt_1.verifyJwt)(accessToken, 'accessTokenPublicKey');
+        const decodedUser = (0, jwt_1.verifyJwt)(accessToken, 'accessTokenKey');
         res.locals.user = decodedUser;
     }
     next();

@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSessionHandler = void 0;
+exports.refreshAccessTokenHandler = exports.createSessionHandler = void 0;
 const authService_1 = require("../service/authService");
 const userService_1 = require("../service/userService");
+const jwt_1 = require("../utils/jwt");
 const createSessionHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const message = { message: 'Invalid email or password' };
     const { email, password } = req.body;
@@ -31,3 +32,23 @@ const createSessionHandler = (req, res) => __awaiter(void 0, void 0, void 0, fun
     return res.send({ accessToken, refreshToken });
 });
 exports.createSessionHandler = createSessionHandler;
+const refreshAccessTokenHandler = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const refreshToken = req.get('x-refresh') || '';
+    console.log(refreshToken);
+    const decoded = (0, jwt_1.verifyJwt)(refreshToken, 'refreshTokenKey');
+    if (!decoded) {
+        console.log('token is not valid');
+        return res.status(401).send({ error: 'Could not refresh token' });
+    }
+    const session = yield (0, authService_1.findSessionById)(decoded.session);
+    if (!session || !session.valid) {
+        return res.status(401).send({ error: 'Could not refresh token' });
+    }
+    const user = yield (0, userService_1.findUserById)(String(session.user));
+    if (!user) {
+        return res.status(401).send({ error: 'Could not refresh token' });
+    }
+    const accessToken = (0, authService_1.signAccessToken)(user);
+    return res.send({ accessToken });
+});
+exports.refreshAccessTokenHandler = refreshAccessTokenHandler;

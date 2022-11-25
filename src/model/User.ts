@@ -2,6 +2,14 @@ import mongoose from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import bcrypt from 'bcrypt'
 
+export const privateFields = [
+  '__v',
+  'password',
+  'verificationCode',
+  'resetPasswordCode',
+  'verifiedStatus',
+]
+
 export interface UserInput {
   email: string
   firstName: string

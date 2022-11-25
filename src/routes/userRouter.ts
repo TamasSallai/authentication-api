@@ -1,4 +1,5 @@
 import express from 'express'
+import requireUser from '../controller/requireUser'
 import {
   createUserHandler,
   verifyUserHandler,
@@ -17,6 +18,6 @@ router.post('/users/forgotpassword', forgotPasswordHandler)
 
 router.post('/users/resetpassword/:id/:passwordResetCode', resetPasswordHandler)
 
-router.post('/users/me', getCurrentUserhandler)
+router.get('/users/me', requireUser, getCurrentUserhandler)
 
 export default router

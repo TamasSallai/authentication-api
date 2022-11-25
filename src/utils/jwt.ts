@@ -2,25 +2,26 @@ import jwt from 'jsonwebtoken'
 
 export const signJwt = (
   object: Object,
-  keyName: 'accessTokenPrivateKey' | 'refreshTokenPrivateKey'
+  keyName: 'accessTokenKey' | 'refreshTokenKey',
+  options: jwt.SignOptions
 ) => {
   const keyBase64 =
-    keyName === 'accessTokenPrivateKey'
+    keyName === 'accessTokenKey'
       ? process.env.ACCESS_TOKEN_KEY
       : process.env.REFRESH_TOKEN_KEY
 
   const signingKey = Buffer.from(keyBase64, 'base64').toString('ascii')
   console.log(`base64 decoded signingkey: ${signingKey}`)
 
-  return jwt.sign(object, signingKey)
+  return jwt.sign(object, signingKey, options)
 }
 
-export const verifyJwt = (
+export const verifyJwt = <T>(
   token: string,
-  keyName: 'accessTokenPublicKey' | 'refreshTokenPublicKey'
-) => {
+  keyName: 'accessTokenKey' | 'refreshTokenKey'
+): T | null => {
   const keyBase64 =
-    keyName === 'accessTokenPublicKey'
+    keyName === 'accessTokenKey'
       ? process.env.ACCESS_TOKEN_KEY
       : process.env.REFRESH_TOKEN_KEY
 
@@ -28,11 +29,9 @@ export const verifyJwt = (
   console.log(`base64 decoded public key: ${publicKey}`)
 
   try {
-    const decoded = jwt.verify(token, publicKey)
+    const decoded = jwt.verify(token, publicKey) as T
     return decoded
   } catch (e) {
-    console.log(e)
-
     return null
   }
 }

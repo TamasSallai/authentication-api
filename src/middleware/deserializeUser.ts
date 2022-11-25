@@ -10,7 +10,7 @@ export const deserializeUser = async (
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     const accessToken = authorization.substring(7)
 
-    const decodedUser = verifyJwt(accessToken, 'accessTokenPublicKey')
+    const decodedUser = verifyJwt(accessToken, 'accessTokenKey')
 
     res.locals.user = decodedUser
   }
